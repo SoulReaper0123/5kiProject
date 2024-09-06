@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TextInput, View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';  // Import vector icons
+
+const { width } = Dimensions.get('window');  // Get screen width for responsiveness
 
 export default function AppLoginPage() {
   const [email, setEmail] = useState('');
@@ -28,18 +30,22 @@ export default function AppLoginPage() {
 
       {/* Email Label and Input */}
       <Text style={styles.label}>Email</Text>
-      <TextInput
-        placeholder="Enter Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+      <View style={styles.inputContainer}>
+        <Icon name="envelope" size={20} color="#666" style={styles.icon} />
+        <TextInput
+          placeholder="Enter Email"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+      </View>
 
       {/* Password Label and Input with Eye Icon */}
       <Text style={styles.label}>Password</Text>
       <View style={styles.passwordContainer}>
+        <Icon name="lock" size={24} color="#666" style={styles.icon} />
         <TextInput
           placeholder="Enter Password"
           secureTextEntry={!isPasswordVisible}
@@ -48,7 +54,7 @@ export default function AppLoginPage() {
           style={styles.passwordInput}
         />
         <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
-          <Icon name={isPasswordVisible ? 'eye' : 'eye-slash'} size={20} color="#666" />
+          <Icon name={isPasswordVisible ? 'eye' : 'eye-slash'} size={24} color="#666" />
         </TouchableOpacity>
       </View>
 
@@ -85,31 +91,42 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 5,
   },
-  input: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '100%',
-    padding: 15,
+    width: width * 0.9,  // Adjust width based on screen size
+    paddingHorizontal: 1.0,
     marginBottom: 20,
     borderRadius: 10,
     backgroundColor: '#fff',
+  },
+  input: {
+    flex: 1,
+    paddingVertical: 10,
+    fontSize: 16,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    width: '100%',
+    width: width * 0.9, 
     borderRadius: 10,
     backgroundColor: '#fff',
     marginBottom: 20,
   },
   passwordInput: {
     flex: 1,
-    padding: 15,
+    paddingVertical: 10,
+    fontSize: 16,
   },
   eyeIcon: {
-    paddingRight: 15,
+    paddingHorizontal: 15,
+  },
+  icon: {
+    paddingHorizontal: 15,
   },
   loginButton: {
     backgroundColor: '#007AFF',
@@ -117,7 +134,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 10,
     marginBottom: 15,
-    width: '100%',
+    width: width * 0.9, 
     alignItems: 'center',
   },
   loginButtonText: {
@@ -131,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: '#007AFF',
     borderWidth: 2,
-    width: '100%',
+    width: width * 0.9, 
     alignItems: 'center',
   },
   registerButtonText: {

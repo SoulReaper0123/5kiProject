@@ -2,6 +2,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'; // Add this import
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import Splashscreen from '../app/Splashscreen';
 import AppLoginPage from '../app/AppLoginPage';
 import RegisterPage from '../app/RegisterPage';

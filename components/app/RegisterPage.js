@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';  // Import the useNavigation hook
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios'; 
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -10,21 +11,24 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const navigation = useNavigation();  // Initialize the navigation object
+  const navigation = useNavigation();
 
-  const handleRegister = () => {
-    // Handle registration logic here
-    console.log('First Name:', firstName);
-    console.log('Middle Name:', middleName);
-    console.log('Last Name:', lastName);
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Confirm Password:', confirmPassword);
-  };
+  function handleRegister(){
+    const UserDetails = {
+      firstName: firstName,
+      middleName: middleName,
+      lastName: lastName,
+      email: email,
+
+    };
+    axios.post('http://10.0.0.42:3000/register', UserDetails)
+    .then((res)=>console.log(res.data))
+    .catch(e=>console.log(e));
+  }
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>{'< Back'}</Text>
       </TouchableOpacity>

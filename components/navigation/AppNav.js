@@ -6,6 +6,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Splashscreen from '../app/Splashscreen';
 import AppLoginPage from '../app/AppLoginPage';
 import RegisterPage from '../app/RegisterPage';
+import RegisterPage2 from '../app/RegisterPage2';
 import AppHome from '../app/AppHome';
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +27,11 @@ const AppNav = () => {
         <Stack.Screen
           name="Register"
           component={RegisterPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Register2"
+          component={RegisterPage2}
           options={{ headerShown: false }}
         />
         <Stack.Screen

@@ -13,7 +13,9 @@ const UserDetails = new mongoose.Schema({
     placeOfBirth: { type: String },
     address: { type: String },
     age: { type: Number },
-    dateOfBirth: { type: Date, required: true }
+    dateOfBirth: { type: Date, required: true },
+    photo: { type: String, required: true },    // URL for photo
+    validId: { type: String, required: true }   // URL for valid ID
 }, {
     collection: "registrations"
 });

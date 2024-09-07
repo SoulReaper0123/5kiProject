@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 
@@ -23,23 +22,31 @@ const RegisterPage = () => {
 
   const navigation = useNavigation();
 
-  const handleRegister = () => {
-    const UserDetails = {
+  const handleNext = () => {
+    // Validate input fields
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    // Convert dateOfBirth to ISO string
+    const dateOfBirthISO = dateOfBirth.toISOString();
+
+    // Pass data to RegisterPage2
+    navigation.navigate('Register2', {
       firstName,
       middleName,
       lastName,
       email,
       phoneNumber,
       password,
-      confirmPassword,
       gender,
       civilStatus,
-      dateOfBirth: dateOfBirth.toISOString().split('T')[0] // Format date to YYYY-MM-DD
-    };
-
-    axios.post('http://10.0.0.42:3000/register', UserDetails)
-      .then((res) => console.log(res.data))
-      .catch(e => console.log(e));
+      placeOfBirth,
+      address,
+      age,
+      dateOfBirth: dateOfBirthISO // Send as ISO string
+    });
   };
 
   const handleDateChange = (event, selectedDate) => {
@@ -86,7 +93,8 @@ const RegisterPage = () => {
         value={age}
         onChangeText={setAge}
         style={styles.input}
-      />  
+        keyboardType="numeric"
+      />
 
       <Text style={styles.label}>Gender</Text>
       <Picker
@@ -179,7 +187,7 @@ const RegisterPage = () => {
         secureTextEntry={true}
       />
 
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Next" onPress={handleNext} />
     </ScrollView>
   );
 };

@@ -1,31 +1,52 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios'; 
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [gender, setGender] = useState('');
+  const [civilStatus, setCivilStatus] = useState('');
+  const [placeOfBirth, setPlaceOfBirth] = useState('');
+  const [address, setAddress] = useState('');
+  const [age, setAge] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const navigation = useNavigation();
 
-  function handleRegister(){
+  const handleRegister = () => {
     const UserDetails = {
-      firstName: firstName,
-      middleName: middleName,
-      lastName: lastName,
-      email: email,
-
+      firstName,
+      middleName,
+      lastName,
+      email,
+      phoneNumber,
+      password,
+      confirmPassword,
+      gender,
+      civilStatus,
+      dateOfBirth: dateOfBirth.toISOString().split('T')[0] // Format date to YYYY-MM-DD
     };
-    axios.post('http://10.0.0.42:3000/register', UserDetails)
-    .then((res)=>console.log(res.data))
-    .catch(e=>console.log(e));
-  }
 
+    axios.post('http://10.0.0.42:3000/register', UserDetails)
+      .then((res) => console.log(res.data))
+      .catch(e => console.log(e));
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || dateOfBirth;
+    setShowDatePicker(Platform.OS === 'ios');
+    setDateOfBirth(currentDate);
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -34,7 +55,7 @@ const RegisterPage = () => {
       </TouchableOpacity>
 
       <Text style={styles.title}>Register</Text>
-      
+
       <Text style={styles.label}>First Name</Text>
       <TextInput
         placeholder="First Name"
@@ -42,7 +63,7 @@ const RegisterPage = () => {
         onChangeText={setFirstName}
         style={styles.input}
       />
-      
+
       <Text style={styles.label}>Middle Name</Text>
       <TextInput
         placeholder="Middle Name"
@@ -50,7 +71,7 @@ const RegisterPage = () => {
         onChangeText={setMiddleName}
         style={styles.input}
       />
-      
+
       <Text style={styles.label}>Last Name</Text>
       <TextInput
         placeholder="Last Name"
@@ -58,7 +79,70 @@ const RegisterPage = () => {
         onChangeText={setLastName}
         style={styles.input}
       />
-      
+
+      <Text style={styles.label}>Age</Text>
+      <TextInput
+        placeholder="Enter Age"
+        value={age}
+        onChangeText={setAge}
+        style={styles.input}
+      />  
+
+      <Text style={styles.label}>Gender</Text>
+      <Picker
+        selectedValue={gender}
+        style={styles.picker}
+        onValueChange={(itemValue) => setGender(itemValue)}
+      >
+        <Picker.Item label="Select Gender" value="" />
+        <Picker.Item label="Male" value="male" />
+        <Picker.Item label="Female" value="female" />
+        <Picker.Item label="Prefer not to say" value="prefer_not_to_say" />
+      </Picker>
+
+      <Text style={styles.label}>Date of Birth</Text>
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+        <Text>{dateOfBirth.toDateString()}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={dateOfBirth}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+
+      <Text style={styles.label}>Place of Birth</Text>
+      <TextInput
+        placeholder="Place of Birth"
+        value={placeOfBirth}
+        onChangeText={setPlaceOfBirth}
+        style={styles.input}
+      />
+
+      <Text style={styles.label}>Current Address</Text>
+      <TextInput
+        placeholder="Enter Address"
+        value={address}
+        onChangeText={setAddress}
+        style={styles.input}
+      />
+
+      <Text style={styles.label}>Civil Status</Text>
+      <Picker
+        selectedValue={civilStatus}
+        style={styles.picker}
+        onValueChange={(itemValue) => setCivilStatus(itemValue)}
+      >
+        <Picker.Item label="Select Civil Status" value="" />
+        <Picker.Item label="Single" value="single" />
+        <Picker.Item label="Married" value="married" />
+        <Picker.Item label="Widowed" value="widowed" />
+        <Picker.Item label="Separated" value="separated" />
+      </Picker>
+
       <Text style={styles.label}>Email</Text>
       <TextInput
         placeholder="Email"
@@ -67,10 +151,19 @@ const RegisterPage = () => {
         style={styles.input}
         keyboardType="email-address"
       />
-      
+
+      <Text style={styles.label}>Phone Number</Text>
+      <TextInput
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+
       <Text style={styles.label}>Password</Text>
       <TextInput
-        placeholder="Password"
+        placeholder="Enter Password"
         value={password}
         onChangeText={setPassword}
         style={styles.input}
@@ -85,7 +178,7 @@ const RegisterPage = () => {
         style={styles.input}
         secureTextEntry={true}
       />
-      
+
       <Button title="Register" onPress={handleRegister} />
     </ScrollView>
   );
@@ -126,6 +219,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     borderColor: '#ccc',
+  },
+  picker: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 15,
+    width: '100%',
   },
 });
 

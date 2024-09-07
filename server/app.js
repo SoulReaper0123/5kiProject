@@ -2,9 +2,9 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 app.use(express.json());
-const bcrypt = require("bc")
+const bcrypt = require("bcryptjs");
 
-const mongoUrl = "mongodb+srv://5KI:5KI000@5kicluster.n6hud.mongodb.net/5KI?retryWrites=true&w=majority&appName=5kiCluster";
+const mongoUrl = "mongodb+srv://5KI:5KI000@5kicluster.n6hud.mongodb.net/?retryWrites=true&w=majority&appName=5kiCluster";
 
 // Connect to MongoDB
 mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,7 +19,7 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 app.use(express.json());
 
 // Import the User model
-require('./RegistrationsDetails'); // Ensure your schema is properly defined in this file
+require('./RegistrationDetails'); // Ensure your schema is properly defined in this file
 
 // Correct the model name to match the schema
 const User = mongoose.model("registrations"); 
@@ -30,7 +30,19 @@ app.get("/", (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-    const { firstName, middleName, lastName, email, password, confirmPassword } = req.body;
+    const { 
+        firstName,
+        middleName,
+        lastName,
+        age,
+        email,
+        phoneNumber,
+        password,
+        confirmPassword,
+        gender,
+        civilStatus,
+        dateOfBirth,
+     } = req.body;
 
     const oldUser = await User.findOne({ email: email });
 
@@ -38,17 +50,23 @@ app.post('/register', async (req, res) => {
         return res.send({ data: "Email Already Exists!" });
     }
     const encryptedPassword = await bcrypt.hash(password, 10);
+    const encryptedConfirmPassword = await bcrypt.hash(confirmPassword, 10);
 
     try {
         await User.create({
             firstName,
             middleName,
             lastName,
+            age,
             email,
+            phoneNumber,
             password: encryptedPassword,
-            confirmPassword,
+            confirmPassword: encryptedConfirmPassword,
+            gender,
+            civilStatus,
+            dateOfBirth,
         });
-        res.send({ status: "ok", data: "User created" });
+        res.send({ status: "ok", data: "User Created" });
     } catch (error) {
         res.send({ status: "error", data: error.message });
     }

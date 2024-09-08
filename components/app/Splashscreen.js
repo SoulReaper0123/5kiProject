@@ -16,7 +16,7 @@ const Splashscreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to MyApp</Text>
+      <Text style={styles.text}>Welcome to 5KI</Text>
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );

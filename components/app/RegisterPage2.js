@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Image, Alert, ScrollView } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Image, Alert, ScrollView, Platform } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import ModalSelector from 'react-native-modal-selector';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -28,6 +30,7 @@ const RegisterPage2 = () => {
   const [validId, setValidId] = useState(null);
   const [selfie, setSelfie] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('Member'); // Default to "Member"
 
   const {
     firstName,
@@ -118,6 +121,7 @@ const RegisterPage2 = () => {
         address,
         age,
         dateOfBirth,
+        status,  // Add status (Member or Non-member)
       };
 
       const response = await axios.post('http://10.0.0.34:3000/register', formData);
@@ -153,6 +157,11 @@ const RegisterPage2 = () => {
     }
   };
 
+  const statusOptions = [
+    { key: 'Member', label: 'Member' },
+    { key: 'Non-member', label: 'Non-member' },
+  ];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -161,17 +170,45 @@ const RegisterPage2 = () => {
 
       <Text style={styles.title}>Complete Registration</Text>
 
-      <Text style={styles.label}>Valid ID Photo</Text>
-      <TouchableOpacity onPress={handleSelectValidId} style={styles.uploadButton}>
-        <Text style={styles.uploadButtonText}>{validId ? 'Change Valid ID' : 'Upload Valid ID'}</Text>
-      </TouchableOpacity>
-      {validId && <Image source={{ uri: validId }} style={styles.imagePreview} />}
+      <View style={styles.section}>
+        <Text style={styles.label}>Register as:</Text>
+        <ModalSelector
+          data={statusOptions}
+          initValue={status}
+          onChange={(option) => setStatus(option.key)}
+          style={styles.picker}
+        >
+          <Text>{status}</Text>
+        </ModalSelector>
+      </View>
 
-      <Text style={styles.label}>Selfie</Text>
-      <TouchableOpacity onPress={handleTakeSelfie} style={styles.uploadButton}>
-        <Text style={styles.uploadButtonText}>{selfie ? 'Change Selfie' : 'Take Selfie'}</Text>
-      </TouchableOpacity>
-      {selfie && <Image source={{ uri: selfie }} style={styles.imagePreview} />}
+      <View style={styles.section}>
+        <Text style={styles.label}>Valid ID Photo</Text>
+        <View style={styles.imagePreviewContainer}>
+          {validId ? (
+            <Image source={{ uri: validId }} style={styles.imagePreview} />
+          ) : (
+            <Icon name="photo" size={100} color="#ccc" />
+          )}
+        </View>
+        <TouchableOpacity onPress={handleSelectValidId} style={styles.uploadButton}>
+          <Text style={styles.uploadButtonText}>{validId ? 'Change Valid ID' : 'Upload Valid ID'}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.label}>Selfie</Text>
+        <View style={styles.imagePreviewContainer}>
+          {selfie ? (
+            <Image source={{ uri: selfie }} style={styles.imagePreview} />
+          ) : (
+            <Icon name="photo-camera" size={100} color="#ccc" />
+          )}
+        </View>
+        <TouchableOpacity onPress={handleTakeSelfie} style={styles.uploadButton}>
+          <Text style={styles.uploadButtonText}>{selfie ? 'Change Selfie' : 'Take Selfie'}</Text>
+        </TouchableOpacity>
+      </View>
 
       <Button title={loading ? 'Registering...' : 'Register'} onPress={handleRegister} disabled={loading} />
     </ScrollView>
@@ -200,30 +237,46 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  section: {
+    marginBottom: 30,
+  },
   label: {
     alignSelf: 'flex-start',
     marginLeft: 10,
     fontSize: 16,
     marginBottom: 5,
   },
-  uploadButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
+  picker: {
+    borderWidth: 1,
+    borderColor: '#ccc',
     borderRadius: 5,
     marginBottom: 15,
-    alignItems: 'center',
+    padding: 10,
   },
-  uploadButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  imagePreview: {
+  imagePreviewContainer: {
     width: '100%',
     height: 200,
     marginBottom: 15,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 5,
+  },
+  uploadButton: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  uploadButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

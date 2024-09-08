@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
+import ModalSelector from 'react-native-modal-selector'; // Use this for alternative picker
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -22,17 +22,32 @@ const RegisterPage = () => {
 
   const navigation = useNavigation();
 
+  useEffect(() => {
+    if (dateOfBirth) {
+      const currentYear = new Date().getFullYear();
+      const birthYear = dateOfBirth.getFullYear();
+      setAge(currentYear - birthYear);
+    }
+  }, [dateOfBirth]);
+
   const handleNext = () => {
-    // Validate input fields
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
-    // Convert dateOfBirth to ISO string
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Invalid email address');
+      return;
+    }
+
+    if (phoneNumber.length < 10) {
+      Alert.alert('Error', 'Phone number should be at least 10 digits');
+      return;
+    }
+
     const dateOfBirthISO = dateOfBirth.toISOString();
 
-    // Pass data to RegisterPage2
     navigation.navigate('Register2', {
       firstName,
       middleName,
@@ -45,7 +60,7 @@ const RegisterPage = () => {
       placeOfBirth,
       address,
       age,
-      dateOfBirth: dateOfBirthISO // Send as ISO string
+      dateOfBirth: dateOfBirthISO
     });
   };
 
@@ -54,6 +69,19 @@ const RegisterPage = () => {
     setShowDatePicker(Platform.OS === 'ios');
     setDateOfBirth(currentDate);
   };
+
+  const genderOptions = [
+    { key: 'Male', label: 'Male' },
+    { key: 'Female', label: 'Female' },
+    { key: 'Prefer Not To Say', label: 'Prefer not to say' },
+  ];
+
+  const civilStatusOptions = [
+    { key: 'Single', label: 'Single' },
+    { key: 'Married', label: 'Married' },
+    { key: 'Widowed', label: 'Widowed' },
+    { key: 'Separated', label: 'Separated' },
+  ];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -90,23 +118,22 @@ const RegisterPage = () => {
       <Text style={styles.label}>Age</Text>
       <TextInput
         placeholder="Enter Age"
-        value={age}
-        onChangeText={setAge}
+        value={age.toString()}
+        onChangeText={text => setAge(text)}
         style={styles.input}
         keyboardType="numeric"
+        editable={false} // Prevent manual editing of age
       />
 
       <Text style={styles.label}>Gender</Text>
-      <Picker
-        selectedValue={gender}
+      <ModalSelector
+        data={genderOptions}
+        initValue="Select Gender"
+        onChange={(option) => setGender(option.key)}
         style={styles.picker}
-        onValueChange={(itemValue) => setGender(itemValue)}
       >
-        <Picker.Item label="Select Gender" value="" />
-        <Picker.Item label="Male" value="male" />
-        <Picker.Item label="Female" value="female" />
-        <Picker.Item label="Prefer not to say" value="prefer_not_to_say" />
-      </Picker>
+        <Text>{gender || 'Select Gender'}</Text>
+      </ModalSelector>
 
       <Text style={styles.label}>Date of Birth</Text>
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
@@ -139,17 +166,14 @@ const RegisterPage = () => {
       />
 
       <Text style={styles.label}>Civil Status</Text>
-      <Picker
-        selectedValue={civilStatus}
+      <ModalSelector
+        data={civilStatusOptions}
+        initValue="Select Civil Status"
+        onChange={(option) => setCivilStatus(option.key)}
         style={styles.picker}
-        onValueChange={(itemValue) => setCivilStatus(itemValue)}
       >
-        <Picker.Item label="Select Civil Status" value="" />
-        <Picker.Item label="Single" value="single" />
-        <Picker.Item label="Married" value="married" />
-        <Picker.Item label="Widowed" value="widowed" />
-        <Picker.Item label="Separated" value="separated" />
-      </Picker>
+        <Text>{civilStatus || 'Select Civil Status'}</Text>
+      </ModalSelector>
 
       <Text style={styles.label}>Email</Text>
       <TextInput
@@ -234,6 +258,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 15,
     width: '100%',
+    padding: 10,
   },
 });
 

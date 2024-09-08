@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ModalSelector from 'react-native-modal-selector'; // Use this for alternative picker
+import ModalSelector from 'react-native-modal-selector';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -22,6 +22,15 @@ const RegisterPage = () => {
 
   const navigation = useNavigation();
 
+  const middleNameInput = useRef(null);
+  const lastNameInput = useRef(null);
+  const emailInput = useRef(null);
+  const phoneNumberInput = useRef(null);
+  const passwordInput = useRef(null);
+  const confirmPasswordInput = useRef(null);
+  const addressInput = useRef(null);
+  const placeOfBirthInput = useRef(null);
+
   useEffect(() => {
     if (dateOfBirth) {
       const currentYear = new Date().getFullYear();
@@ -31,18 +40,28 @@ const RegisterPage = () => {
   }, [dateOfBirth]);
 
   const handleNext = () => {
+    if (!firstName || !lastName || !email || !phoneNumber || !password || !confirmPassword || !gender || !civilStatus || !placeOfBirth || !address) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
-    if (!email.includes('@')) {
-      Alert.alert('Error', 'Invalid email address');
+    if (password.length < 8) {
+      Alert.alert('Error', 'Password should be at least 8 characters long');
       return;
     }
 
-    if (phoneNumber.length < 10) {
-      Alert.alert('Error', 'Phone number should be at least 10 digits');
+    if (!email.includes('@') || !email.endsWith('.com')) {
+      Alert.alert('Error', 'Email should be in the format example@domain.com');
+      return;
+    }
+
+    if (phoneNumber.length < 11) {
+      Alert.alert('Error', 'Phone number should be at least 11 digits');
       return;
     }
 
@@ -70,6 +89,21 @@ const RegisterPage = () => {
     setDateOfBirth(currentDate);
   };
 
+  const handlePhoneNumberChange = (text) => {
+    if (text.length <= 11) {
+      setPhoneNumber(text);
+    }
+  };
+
+  const handleSubmitEditing = (nextInputRef) => {
+    nextInputRef.current?.focus();
+  };
+
+  const handleLastInputSubmit = () => {
+    Keyboard.dismiss();
+    handleNext();
+  };
+
   const genderOptions = [
     { key: 'Male', label: 'Male' },
     { key: 'Female', label: 'Female' },
@@ -93,26 +127,34 @@ const RegisterPage = () => {
 
       <Text style={styles.label}>First Name</Text>
       <TextInput
-        placeholder="First Name"
+        placeholder="Enter First Name"
         value={firstName}
         onChangeText={setFirstName}
         style={styles.input}
+        returnKeyType="next"
+        onSubmitEditing={() => middleNameInput.current?.focus()}
       />
 
       <Text style={styles.label}>Middle Name</Text>
       <TextInput
-        placeholder="Middle Name"
+        placeholder="Enter Middle Name"
         value={middleName}
         onChangeText={setMiddleName}
         style={styles.input}
+        returnKeyType="next"
+        ref={middleNameInput}
+        onSubmitEditing={() => lastNameInput.current?.focus()}
       />
 
       <Text style={styles.label}>Last Name</Text>
       <TextInput
-        placeholder="Last Name"
+        placeholder="Enter Last Name"
         value={lastName}
         onChangeText={setLastName}
         style={styles.input}
+        returnKeyType="next"
+        ref={lastNameInput}
+        onSubmitEditing={() => placeOfBirthInput.current?.focus()}
       />
 
       <Text style={styles.label}>Age</Text>
@@ -122,7 +164,7 @@ const RegisterPage = () => {
         onChangeText={text => setAge(text)}
         style={styles.input}
         keyboardType="numeric"
-        editable={false} // Prevent manual editing of age
+        editable={false}
       />
 
       <Text style={styles.label}>Gender</Text>
@@ -151,10 +193,13 @@ const RegisterPage = () => {
 
       <Text style={styles.label}>Place of Birth</Text>
       <TextInput
-        placeholder="Place of Birth"
+        placeholder="Enter Place of Birth"
         value={placeOfBirth}
         onChangeText={setPlaceOfBirth}
         style={styles.input}
+        returnKeyType="next"
+        ref={placeOfBirthInput}
+        onSubmitEditing={() => addressInput.current?.focus()}
       />
 
       <Text style={styles.label}>Current Address</Text>
@@ -163,6 +208,9 @@ const RegisterPage = () => {
         value={address}
         onChangeText={setAddress}
         style={styles.input}
+        returnKeyType="next"
+        ref={addressInput}
+        onSubmitEditing={() => emailInput.current?.focus()}
       />
 
       <Text style={styles.label}>Civil Status</Text>
@@ -177,20 +225,26 @@ const RegisterPage = () => {
 
       <Text style={styles.label}>Email</Text>
       <TextInput
-        placeholder="Email"
+        placeholder="Enter Email"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
         keyboardType="email-address"
+        returnKeyType="next"
+        ref={emailInput}
+        onSubmitEditing={() => phoneNumberInput.current?.focus()}
       />
 
       <Text style={styles.label}>Phone Number</Text>
       <TextInput
-        placeholder="Phone Number"
+        placeholder="Enter Phone Number"
         value={phoneNumber}
-        onChangeText={setPhoneNumber}
+        onChangeText={handlePhoneNumberChange}
         style={styles.input}
         keyboardType="numeric"
+        returnKeyType="next"
+        ref={phoneNumberInput}
+        onSubmitEditing={() => passwordInput.current?.focus()}
       />
 
       <Text style={styles.label}>Password</Text>
@@ -200,6 +254,9 @@ const RegisterPage = () => {
         onChangeText={setPassword}
         style={styles.input}
         secureTextEntry={true}
+        returnKeyType="next"
+        ref={passwordInput}
+        onSubmitEditing={() => confirmPasswordInput.current?.focus()}
       />
 
       <Text style={styles.label}>Confirm Password</Text>
@@ -209,6 +266,9 @@ const RegisterPage = () => {
         onChangeText={setConfirmPassword}
         style={styles.input}
         secureTextEntry={true}
+        returnKeyType="done"
+        ref={confirmPasswordInput}
+        onSubmitEditing={handleLastInputSubmit}
       />
 
       <Button title="Next" onPress={handleNext} />
@@ -219,45 +279,38 @@ const RegisterPage = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 60,
+    padding: 20,
+    backgroundColor: '#fff',
   },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
+    marginBottom: 20,
   },
   backButtonText: {
-    fontSize: 16,
-    color: '#007AFF',
+    color: 'blue',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
     marginBottom: 20,
+    textAlign: 'center',
   },
   label: {
-    alignSelf: 'flex-start',
-    marginLeft: 10,
     fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   input: {
     borderWidth: 1,
-    marginBottom: 15,
-    width: '100%',
-    padding: 10,
-    borderRadius: 5,
     borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 15,
+    padding: 10,
   },
   picker: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     marginBottom: 15,
-    width: '100%',
     padding: 10,
   },
 });

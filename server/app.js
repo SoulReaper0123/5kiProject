@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
     dateOfBirth: Date,
     validId: String,
     selfie: String,
+    status: String,
 });
 
 const User = mongoose.model("User", userSchema, "registrations");
@@ -52,7 +53,8 @@ app.post('/register', async (req, res) => {
         confirmPassword,
         gender,
         civilStatus,
-        dateOfBirth
+        dateOfBirth,
+        status,
     } = req.body;
 
     try {
@@ -67,7 +69,8 @@ app.post('/register', async (req, res) => {
             confirmPassword,
             gender,
             civilStatus,
-            dateOfBirth
+            dateOfBirth,
+            status,
         });
 
         // Hash password

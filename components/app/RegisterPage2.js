@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     marginBottom: 5,
+    fontWeight: 'bold'
   },
   picker: {
     borderWidth: 1,

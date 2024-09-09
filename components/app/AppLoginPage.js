@@ -1,3 +1,4 @@
+// AppLoginPage.js
 import React, { useState } from 'react';
 import { Text, TextInput, View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -13,7 +14,7 @@ export default function AppLoginPage() {
 
   const handleLogin = () => {
     console.log('Login button pressed');
-    navigation.navigate('Home');
+    navigation.navigate('DrawerNav'); // Navigate to the DrawerNav
   };
 
   const handleRegister = () => {

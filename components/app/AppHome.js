@@ -9,51 +9,60 @@ const AppHome = () => {
   const navigation = useNavigation();
 
   // Function to format balance as pesos
-  const formatBalance = (amount) => {
-    return `₱${amount.toFixed(2)}`; // Use the pesos symbol and format to 2 decimal places
-  };
+  const formatBalance = (amount) => `₱${amount.toFixed(2)}`;
 
   return (
     <View style={styles.container}>
+      {/* Button to open the drawer */}
       <TouchableOpacity
         style={styles.iconButton}
-        onPress={() => navigation.openDrawer()} // Open drawer on press
+        onPress={() => navigation.openDrawer()}
       >
-        <MaterialIcons name="menu" size={30} color="black" />
+        <MaterialIcons name="account-circle" size={30} color="black" />
       </TouchableOpacity>
-      <Text style={styles.text}>Mobile Home Page</Text>
 
+      {/* Welcome text */}
+      <Text style={styles.text}>Welcome! NOW GOODBYE!</Text>
+
+      {/* Balance display */}
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceText}>Balance:</Text>
         <Text style={styles.balanceAmount}>{formatBalance(balance)}</Text>
       </View>
 
+      {/* Icon grid */}
       <View style={styles.iconGrid}>
         <View style={styles.iconRow}>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}
+           onPress={() => navigation.navigate('ApplyLoan')}>
             <MaterialIcons name="credit-card" size={30} color="black" />
             <Text style={styles.iconText}>Apply Loan</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}
+          onPress={() => navigation.navigate('PayLoan')}>
             <MaterialIcons name="payment" size={30} color="black" />
             <Text style={styles.iconText}>Pay Loan</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.iconRow}>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}
+          onPress={() => navigation.navigate('Deposit')}>
             <MaterialIcons name="add-box" size={30} color="black" />
             <Text style={styles.iconText}>Deposit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}
+          onPress={() => navigation.navigate('Withdraw')}>
             <MaterialIcons name="remove-circle" size={30} color="black" />
             <Text style={styles.iconText}>Withdraw</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}>
+          <TouchableOpacity style={styles.iconContainer}
+          onPress={() => navigation.navigate('Transactions')}>
             <MaterialIcons name="history" size={30} color="black" />
             <Text style={styles.iconText}>Transactions</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconContainer}
+        onPress={() => navigation.navigate('ExistingLoan')}>
           <MaterialIcons name="folder-open" size={30} color="black" />
           <Text style={styles.iconText}>Existing Loans</Text>
         </TouchableOpacity>
@@ -72,9 +81,9 @@ const styles = StyleSheet.create({
     top: 40,
     left: 20,
     backgroundColor: '#f0f0f0', // Light grey background for the circle
-    borderRadius: 25, // Half of the width/height to make it circular
-    width: 50, // Width of the circle
-    height: 50, // Height of the circle
+    borderRadius: 25, // Make it circular
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,

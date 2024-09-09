@@ -7,7 +7,13 @@ import AppLoginPage from '../app/AppLoginPage';
 import RegisterPage from '../app/RegisterPage';
 import RegisterPage2 from '../app/RegisterPage2';
 import AppHome from '../app/AppHome';
-import ProfileScreen from '../app/Profile';
+import ProfileScreen from '../app/HomePage/Profile';
+import ApplyLoan from '../app/HomePage/ApplyLoan';
+import PayLoan from '../app/HomePage/PayLoan';
+import Deposit from '../app/HomePage/Deposit';
+import Withdraw from '../app/HomePage/Withdraw';
+import Transactions from '../app/HomePage/Transactions';
+import ExistingLoan from '../app/HomePage/ExistingLoan';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -85,6 +91,36 @@ const AppNav = () => (
     <Stack.Screen
       name="DrawerNav"
       component={DrawerNavigator}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="ApplyLoan"
+      component={ApplyLoan}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="PayLoan"
+      component={PayLoan}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="ExistingLoan"
+      component={ExistingLoan}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Deposit"
+      component={Deposit}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Withdraw"
+      component={Withdraw}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Transactions"
+      component={Transactions}
       options={{ headerShown: false }}
     />
   </Stack.Navigator>

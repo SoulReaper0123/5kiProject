@@ -23,7 +23,6 @@ export default function AppLoginPage() {
     return () => backHandler.remove();  // Cleanup the event listener on unmount
   }, []);
   
-
   const handleLogin = () => {
     console.log('Login button pressed');
     navigation.navigate('DrawerNav'); // Navigate to the DrawerNav
@@ -31,6 +30,10 @@ export default function AppLoginPage() {
 
   const handleRegister = () => {
     navigation.navigate('Register');
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate('ForgotPassword'); // Navigate to the Forgot Password page
   };
 
   const togglePasswordVisibility = () => {
@@ -71,11 +74,17 @@ export default function AppLoginPage() {
         </TouchableOpacity>
       </View>
 
-      {/* Login and Sign Up Buttons */}
+      {/* Forgot Password Link */}
+      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotPasswordButton}>
+        <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
+      </TouchableOpacity>
+
+      {/* Login Button */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
 
+      {/* Sign Up Button */}
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.registerButtonText}>Sign Up</Text>
       </TouchableOpacity>
@@ -110,7 +119,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     width: width * 0.9,  // Adjust width based on screen size
-    paddingHorizontal: 1.0,
+    paddingHorizontal: 10,
     marginBottom: 20,
     borderRadius: 10,
     backgroundColor: '#fff',
@@ -128,7 +137,7 @@ const styles = StyleSheet.create({
     width: width * 0.9, 
     borderRadius: 10,
     backgroundColor: '#fff',
-    marginBottom: 20,
+    marginBottom: 10, // Reduced margin to make space for the forgot password link
   },
   passwordInput: {
     flex: 1,
@@ -153,6 +162,15 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',  // Align to the right
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: '#007AFF',
+    fontSize: 16,
     fontWeight: 'bold',
   },
   registerButton: {

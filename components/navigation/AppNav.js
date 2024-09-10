@@ -4,6 +4,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import { Alert, View, Button } from 'react-native';
 import Splashscreen from '../app/Splashscreen';
 import AppLoginPage from '../app/AppLoginPage';
+import ForgotPassword from '../app/ForgotPassword';
 import RegisterPage from '../app/RegisterPage';
 import RegisterPage2 from '../app/RegisterPage2';
 import AppHome from '../app/AppHome';
@@ -16,6 +17,7 @@ import Deposit from '../app/HomePage/Deposit';
 import Withdraw from '../app/HomePage/Withdraw';
 import Transactions from '../app/HomePage/Transactions';
 import ExistingLoan from '../app/HomePage/ExistingLoan';
+
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -80,6 +82,11 @@ const AppNav = () => (
     <Stack.Screen
       name="Login"
       component={AppLoginPage}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="ForgotPassword"
+      component={ForgotPassword}
       options={{ headerShown: false }}
     />
     <Stack.Screen

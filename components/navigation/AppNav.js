@@ -63,7 +63,7 @@ const DrawerNavigator = () => (
       headerShown: false, // Optional: Hide header for all drawer screens
     }}
   >
-    <Drawer.Screen name="Home" component={AppHome} />
+    <Drawer.Screen name="Home Page" component={AppHome} />
     <Drawer.Screen name="Account Management" component={ProfileScreen} />
     <Drawer.Screen name="Terms and Conditions" component={Terms} />
     <Drawer.Screen name="Privacy Policy" component={Privacy} />

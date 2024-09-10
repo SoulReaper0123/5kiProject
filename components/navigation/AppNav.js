@@ -7,7 +7,9 @@ import AppLoginPage from '../app/AppLoginPage';
 import RegisterPage from '../app/RegisterPage';
 import RegisterPage2 from '../app/RegisterPage2';
 import AppHome from '../app/AppHome';
-import ProfileScreen from '../app/HomePage/Profile';
+import ProfileScreen from '../app/Drawer/Profile';
+import Terms from '../app/Drawer/Terms';
+import Privacy from '../app/Drawer/Privacy';
 import ApplyLoan from '../app/HomePage/ApplyLoan';
 import PayLoan from '../app/HomePage/PayLoan';
 import Deposit from '../app/HomePage/Deposit';
@@ -62,7 +64,9 @@ const DrawerNavigator = () => (
     }}
   >
     <Drawer.Screen name="Home" component={AppHome} />
-    <Drawer.Screen name="Profile" component={ProfileScreen} />
+    <Drawer.Screen name="Account Management" component={ProfileScreen} />
+    <Drawer.Screen name="Terms and Conditions" component={Terms} />
+    <Drawer.Screen name="Privacy Policy" component={Privacy} />
   </Drawer.Navigator>
 );
 

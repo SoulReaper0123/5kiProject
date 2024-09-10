@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const ExistingLoan = () => {
+const Privacy = () => {
   const navigation = useNavigation(); // Use the navigation hook
 
   return (
     <View style={styles.container}>
+      {/* Back button */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()} // Go back to the previous screen
@@ -15,7 +16,7 @@ const ExistingLoan = () => {
         <MaterialIcons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
 
-      <Text style={styles.text}>Existing Loans</Text>
+      <Text style={styles.text}>Privacy Policy</Text>
     </View>
   );
 };
@@ -45,4 +46,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExistingLoan;
+export default Privacy;

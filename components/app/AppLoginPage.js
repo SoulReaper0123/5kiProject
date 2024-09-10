@@ -1,6 +1,5 @@
-// AppLoginPage.js
-import React, { useState } from 'react';
-import { Text, TextInput, View, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';  // Import useEffect
+import { Text, TextInput, View, TouchableOpacity, StyleSheet, Dimensions, BackHandler } from 'react-native';  // Import BackHandler
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';  // Import vector icons
 
@@ -11,6 +10,19 @@ export default function AppLoginPage() {
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);  // State for toggling password visibility
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const backAction = () => {
+      // Use BackHandler to exit the app when the back button is pressed
+      BackHandler.exitApp();
+      return true; // Return true to prevent the default behavior
+    };
+  
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+  
+    return () => backHandler.remove();  // Cleanup the event listener on unmount
+  }, []);
+  
 
   const handleLogin = () => {
     console.log('Login button pressed');

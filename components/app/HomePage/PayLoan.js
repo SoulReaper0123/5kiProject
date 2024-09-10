@@ -1,54 +1,162 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import ModalSelector from 'react-native-modal-selector';
 
 const PayLoan = () => {
   const navigation = useNavigation();
 
+  const [paymentOption, setPaymentOption] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [amountToBePaid, setAmountToBePaid] = useState('');
+
+  const balance = "₱10,000.00"; // Static balance
+
+  // Payment options data
+  const paymentOptions = [
+    { key: 'Bank', label: 'Bank' },
+    { key: 'Gcash', label: 'Gcash' },
+  ];
+
+  // Update account number based on the selected payment option
+  const handlePaymentOptionChange = (option) => {
+    setPaymentOption(option.key);
+    if (option.key === 'Bank') {
+      setAccountNumber('00123');
+    } else if (option.key === 'Gcash') {
+      setAccountNumber('09123');
+    }
+  };
+
+  const handleSubmit = () => {
+    if (!paymentOption || !amountToBePaid) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+
+    Alert.alert(
+      'Confirm Payment',
+      `Balance: ${balance}\nPayment Option: ${paymentOption}\nAccount Name: 5KI\nAccount Number: ${accountNumber}\nAmount to be Paid: ₱${parseFloat(amountToBePaid).toFixed(2)}`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Confirm', onPress: () => console.log('Payment Submitted') }
+      ]
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* Back button */}
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.goBack()} // Go back to the previous screen
+        onPress={() => navigation.goBack()}
       >
         <MaterialIcons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
 
-      {/* Content of the ApplyLoan screen */}
+      {/* Content of the PayLoan screen */}
       <View style={styles.content}>
         <Text style={styles.title}>Pay a Loan</Text>
-        <Text style={styles.description}>
-          Fill out the form below to pay for a loan.
-        </Text>
-        {/* Add your loan application form or content here */}
+
+        {/* Display the balance */}
+        <Text style={styles.label}>Balance</Text>
+        <Text style={styles.balanceText}>{balance}</Text>
+
+        {/* Payment options */}
+        <Text style={styles.label}>Payment Option</Text>
+        <ModalSelector
+          data={paymentOptions}
+          initValue="Select Payment Option"
+          onChange={handlePaymentOptionChange}
+          style={styles.picker}
+        >
+          <Text>{paymentOption || 'Select Payment Option'}</Text>
+        </ModalSelector>
+
+        {/* Fixed Account Name */}
+        <Text style={styles.label}>Account Name</Text>
+        <TextInput
+          value="5KI" // Fixed value
+          style={[styles.input, styles.fixedInput]}
+          editable={false}
+        />
+
+        {/* Dynamic Account Number based on Payment Option */}
+        <Text style={styles.label}>Account Number</Text>
+        <TextInput
+          value={accountNumber} // Dynamic account number
+          style={[styles.input, styles.fixedInput]}
+          editable={false}
+        />
+
+        {/* Amount to be paid */}
+        <Text style={styles.label}>Amount to be Paid</Text>
+        <TextInput
+          placeholder="Enter Amount"
+          value={amountToBePaid}
+          onChangeText={setAmountToBePaid}
+          style={styles.input}
+          keyboardType="numeric"
+        />
+
+        {/* Submit Button */}
+        <Button title="Submit" onPress={handleSubmit} />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: '#fff',
   },
   backButton: {
-    marginVertical: 20,
+    marginBottom: 20,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 100,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  description: {
-    fontSize: 16,
+    marginBottom: 20,
     textAlign: 'center',
-    marginVertical: 10,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    alignSelf: 'flex-start',
+    width: '100%',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 15,
+    padding: 10,
+    width: '100%',
+  },
+  picker: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 15,
+    padding: 10,
+    width: '100%',
+  },
+  fixedInput: {
+    backgroundColor: '#f5f5f5',
+  },
+  balanceText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
   },
 });
 

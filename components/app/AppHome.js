@@ -1,6 +1,5 @@
-// AppHome.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, BackHandler } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
@@ -10,6 +9,20 @@ const AppHome = () => {
 
   // Function to format balance as pesos
   const formatBalance = (amount) => `₱${amount.toFixed(2)}`;
+
+  useEffect(() => {
+    const backAction = () => {
+      // Instead of navigating back, open the drawer
+      navigation.openDrawer();
+      return true; // Return true to prevent the default back button behavior
+    };
+
+    // Add event listener for back button press
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    // Cleanup the event listener on unmount
+    return () => backHandler.remove();
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -33,36 +46,30 @@ const AppHome = () => {
       {/* Icon grid */}
       <View style={styles.iconGrid}>
         <View style={styles.iconRow}>
-          <TouchableOpacity style={styles.iconContainer}
-           onPress={() => navigation.navigate('ApplyLoan')}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ApplyLoan')}>
             <MaterialIcons name="credit-card" size={30} color="black" />
             <Text style={styles.iconText}>Apply Loan</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}
-          onPress={() => navigation.navigate('PayLoan')}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('PayLoan')}>
             <MaterialIcons name="payment" size={30} color="black" />
             <Text style={styles.iconText}>Pay Loan</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.iconRow}>
-          <TouchableOpacity style={styles.iconContainer}
-          onPress={() => navigation.navigate('Deposit')}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Deposit')}>
             <MaterialIcons name="add-box" size={30} color="black" />
             <Text style={styles.iconText}>Deposit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}
-          onPress={() => navigation.navigate('Withdraw')}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Withdraw')}>
             <MaterialIcons name="remove-circle" size={30} color="black" />
             <Text style={styles.iconText}>Withdraw</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconContainer}
-          onPress={() => navigation.navigate('Transactions')}>
+          <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('Transactions')}>
             <MaterialIcons name="history" size={30} color="black" />
             <Text style={styles.iconText}>Transactions</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.iconContainer}
-        onPress={() => navigation.navigate('ExistingLoan')}>
+        <TouchableOpacity style={styles.iconContainer} onPress={() => navigation.navigate('ExistingLoan')}>
           <MaterialIcons name="folder-open" size={30} color="black" />
           <Text style={styles.iconText}>Existing Loans</Text>
         </TouchableOpacity>

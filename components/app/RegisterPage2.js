@@ -124,7 +124,7 @@ const RegisterPage2 = () => {
         status,  // Add status (Member or Non-member)
       };
 
-      const response = await axios.post('http://10.0.0.49:3000/register', formData);
+      const response = await axios.post('http://192.168.1.12:3000/register', formData);
 
       if (response.data.status === 'ok') {
         // Step 2: Upload images to Firebase
@@ -138,7 +138,7 @@ const RegisterPage2 = () => {
         }
 
         // Step 3: Send image URLs to the server
-        await axios.post('http://10.0.0.49:3000/updateImages', {
+        await axios.post('http://192.168.1.12:3000/updateImages', {
           email,
           validId: validIdUrl,
           selfie: selfieUrl,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     marginBottom: 5,
-    fontWeight: 'bold'
+
   },
   picker: {
     borderWidth: 1,

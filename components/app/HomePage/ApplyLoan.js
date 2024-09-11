@@ -1,8 +1,10 @@
+// app/homepage/ApplyLoan.jsx
 import React, { useState, useRef } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, Keyboard } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector';
+import { submitLoanApplication } from '../api'; // Import API function
 
 const ApplyLoan = () => {
   const navigation = useNavigation();
@@ -26,11 +28,11 @@ const ApplyLoan = () => {
   ];
 
   const disbursementOptions = [
-    { key: 'Gcash', label: 'Gcash' },
+    { key: 'GCash', label: 'GCash' },
     { key: 'Bank', label: 'Bank' },
   ];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!loanAmount || !term || !disbursement || !accountName || !accountNumber) {
       Alert.alert('Error', 'All fields are required');
       return;
@@ -45,7 +47,32 @@ const ApplyLoan = () => {
       `Loan Amount: ₱${formattedLoanAmount}\nTerms: ${term} Months\nDisbursement: ${disbursement}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}\nProcessing Fee: ₱100.00\nRelease Amount: ₱${releaseAmount}`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', onPress: () => console.log('Application Submitted') }
+        { text: 'Confirm', onPress: async () => {
+            try {
+              const applicationData = {
+                loanAmount: formattedLoanAmount,
+                term,
+                disbursement,
+                accountName,
+                accountNumber,
+                processingFee,
+                releaseAmount,
+              };
+              
+              const response = await submitLoanApplication(applicationData);
+              
+              if (response.status === 'ok') {
+                Alert.alert('Success', 'Loan application submitted successfully');
+                navigation.goBack();
+              } else {
+                Alert.alert('Error', 'Failed to submit loan application');
+              }
+            } catch (error) {
+              console.error('Error during loan application submission:', error);
+              Alert.alert('Error', 'An error occurred while submitting your loan application');
+            }
+          }
+        }
       ]
     );
   };

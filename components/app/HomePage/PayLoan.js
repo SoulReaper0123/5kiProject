@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert, Scr
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector';
+import { handleLoanPayment } from '../api'; // Import API function
 
 const PayLoan = () => {
   const navigation = useNavigation();
@@ -22,25 +23,44 @@ const PayLoan = () => {
   // Update account number based on the selected payment option
   const handlePaymentOptionChange = (option) => {
     setPaymentOption(option.key);
-    if (option.key === 'Bank') {
-      setAccountNumber('00123');
-    } else if (option.key === 'Gcash') {
-      setAccountNumber('09123');
-    }
+    setAccountNumber(option.key === 'Bank' ? '00123' : '09123');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!paymentOption || !amountToBePaid) {
       Alert.alert('Error', 'All fields are required');
       return;
     }
 
+    // Confirm payment details
     Alert.alert(
       'Confirm Payment',
       `Balance: ${balance}\nPayment Option: ${paymentOption}\nAccount Name: 5KI\nAccount Number: ${accountNumber}\nAmount to be Paid: ₱${parseFloat(amountToBePaid).toFixed(2)}`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', onPress: () => console.log('Payment Submitted') }
+        { text: 'Confirm', onPress: async () => {
+          try {
+            const paymentData = {
+              paymentOption,
+              accountNumber,
+              amountToBePaid: parseFloat(amountToBePaid),
+            };
+
+            // Call API to handle loan payment
+            const result = await handleLoanPayment(paymentData);
+            console.log('Payment response:', result);
+            Alert.alert('Success', 'Payment recorded successfully');
+            navigation.goBack();
+
+            // Reset form fields
+            setPaymentOption('');
+            setAccountNumber('');
+            setAmountToBePaid('');
+          } catch (error) {
+            console.error('Error during payment submission:', error);
+            Alert.alert('Error', 'Error recording payment');
+          }
+        } },
       ]
     );
   };
@@ -57,11 +77,7 @@ const PayLoan = () => {
 
       {/* Content of the PayLoan screen */}
       <View style={styles.content}>
-        <Text style={styles.title}>Pay a Loan</Text>
-
-        {/* Display the balance */}
-        <Text style={styles.label}>Balance</Text>
-        <Text style={styles.balanceText}>{balance}</Text>
+        <Text style={styles.title}>Pay Loan</Text>
 
         {/* Payment options */}
         <Text style={styles.label}>Payment Option</Text>
@@ -152,11 +168,6 @@ const styles = StyleSheet.create({
   },
   fixedInput: {
     backgroundColor: '#f5f5f5',
-  },
-  balanceText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
   },
 });
 

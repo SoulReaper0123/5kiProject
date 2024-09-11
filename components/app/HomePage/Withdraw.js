@@ -3,25 +3,26 @@ import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity, ScrollView
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import ModalSelector from 'react-native-modal-selector';
+import { handleWithdraw } from '../api'; // Ensure this import is correctly pointing to your API handler
 
 const Withdraw = () => {
   const navigation = useNavigation();
-
+  
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [disbursement, setDisbursement] = useState('');
   const [accountName, setAccountName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [balance, setBalance] = useState(5000.00); // Example balance
-
+  
   const accountNameInput = useRef(null);
   const accountNumberInput = useRef(null);
-
+  
   const disbursementOptions = [
     { key: 'Gcash', label: 'Gcash' },
     { key: 'Bank', label: 'Bank' },
   ];
 
-  const handleWithdraw = () => {
+  const handleWithdrawClick = async () => {
     if (!withdrawAmount || !disbursement || !accountName || !accountNumber) {
       Alert.alert('Error', 'All fields are required');
       return;
@@ -35,31 +36,52 @@ const Withdraw = () => {
     const formattedWithdrawAmount = parseFloat(withdrawAmount).toFixed(2);
 
     Alert.alert(
-      'Confirm Withdrawal?',
+      'Confirm Withdrawal',
       `Withdraw Amount: ₱${formattedWithdrawAmount}\nDisbursement: ${disbursement}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', onPress: () => console.log('Withdrawal Submitted') }
+        { text: 'Confirm', onPress: async () => {
+          try {
+            const withdrawData = {
+              withdrawAmount: parseFloat(withdrawAmount),
+              disbursement,
+              accountName,
+              accountNumber
+            };
+
+            // Call API to handle withdrawal
+            const result = await handleWithdraw(withdrawData);
+            console.log('Withdrawal response:', result);
+            Alert.alert('Success', 'Withdrawal processed successfully');
+
+            // Reset form fields
+            setWithdrawAmount('');
+            setDisbursement('');
+            setAccountName('');
+            setAccountNumber('');
+            setBalance(balance - parseFloat(withdrawAmount)); // Update balance
+          } catch (error) {
+            console.error('Error during withdrawal submission:', error);
+            Alert.alert('Error', 'Error processing withdrawal');
+          }
+        } }
       ]
     );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back button */}
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.goBack()} // Go back to the previous screen
+        onPress={() => navigation.goBack()}
       >
         <MaterialIcons name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
 
-      {/* Balance Display */}
       <View style={styles.balanceContainer}>
         <Text style={styles.balanceText}>Available Balance: ₱{balance.toFixed(2)}</Text>
       </View>
 
-      {/* Content of the Withdraw screen */}
       <View style={styles.content}>
         <Text style={styles.title}>Withdraw Funds</Text>
 
@@ -105,12 +127,12 @@ const Withdraw = () => {
           returnKeyType="done"
           ref={accountNumberInput}
           onSubmitEditing={() => {
-            Keyboard.dismiss(); // Dismiss the keyboard on submit
-            handleWithdraw(); // Trigger the submit function
+            Keyboard.dismiss();
+            handleWithdrawClick();
           }}
         />
 
-        <Button title="Submit" onPress={handleWithdraw} />
+        <Button title="Submit" onPress={handleWithdrawClick} />
       </View>
     </ScrollView>
   );
